@@ -181,7 +181,41 @@ void Button_2_Monitor(void * pvParameters){
     }
 }//10us
 
+void Periodic_Transmitter(void * pvParameters){				
+	  TickType_t xLastWakeTime = xTaskGetTickCount();
+		QMessage periodicTransmitter = {'3', "\nPeroidic Message\n"};
 
+    for(;;){
+			GPIO_write(PORT_0, TRANSMIT_ANALYZER, PIN_IS_HIGH);
+			xQueueSend(xQueue,(void *) &periodicTransmitter, 10);
+			GPIO_write(PORT_0, TRANSMIT_ANALYZER, PIN_IS_LOW);			
+			vTaskDelayUntil(&xLastWakeTime, PERIODIC_TRANSMITTER);
+    }		
+}//6us
+
+void Uart_Receiver(void * pvParameters){
+		QMessage uartReceived;
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+
+    for(;;){
+			GPIO_write(PORT_0, UART_ANALYZER, PIN_IS_HIGH);
+			xQueueReceive(xQueue, &uartReceived, portMAX_DELAY);
+			switch(uartReceived.MessageID){
+				case '1':
+					vSerialPutString((signed char *)"\nButton 1\n", 20);
+					break;
+				case '2':
+					vSerialPutString((signed char *)"\nButton 2\n", 20);
+					break;
+				case '3':
+					vSerialPutString((signed char *)"\nPeriodic Message\n", 20);					
+					break;
+			}
+			vSerialPutString((signed char *)uartReceived.Data, 20);
+			GPIO_write(PORT_0, UART_ANALYZER, PIN_IS_LOW);			
+			vTaskDelayUntil(&xLastWakeTime, UART_RECEIVER);
+    }
+}
 
 
 
