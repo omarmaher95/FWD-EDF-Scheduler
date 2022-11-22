@@ -217,7 +217,32 @@ void Uart_Receiver(void * pvParameters){
     }
 }
 
+void Load_1_Simulation(void * pvParameters){	
+		int i =0;
+    TickType_t xLastWakeTime = xTaskGetTickCount();
 
+    for(;;){
+ 			GPIO_write(PORT_0, LOAD_1_ANALYZER, PIN_IS_HIGH);
+			for (i=0; i<40000; i++){
+			}
+			GPIO_write(PORT_0, LOAD_1_ANALYZER, PIN_IS_LOW);
+			vTaskDelayUntil( &xLastWakeTime, LOAD_1_SIMULATION );
+    }
+}//5.3ms
+
+
+void Load_2_Simulation(void * pvParameters){
+		int i =0;
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+
+    for(;;){
+			GPIO_write(PORT_0, LOAD_2_ANALYZER, PIN_IS_HIGH);
+			for (i=0; i<100000; i++){				
+			}
+			GPIO_write(PORT_0, LOAD_2_ANALYZER, PIN_IS_LOW);
+			vTaskDelayUntil(&xLastWakeTime, LOAD_2_SIMULATION);
+    }
+}
 
 
 int main( void )
